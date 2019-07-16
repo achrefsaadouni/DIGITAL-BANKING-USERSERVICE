@@ -9,6 +9,7 @@ import tn.com.biat.user_service.repositories.RoleRepository;
 import tn.com.biat.user_service.repositories.UserRepository;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Null;
 import java.util.HashSet;
 import java.util.List;
 
@@ -30,6 +31,14 @@ public class UserController {
     }
 
 
+
+    //afficher un user selon id
+
+    @RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
+    public User getUserById(@PathVariable("id") String id) {
+        return userRepository.findById(id).get();
+    }
+
     //Modifer un user selon id
 
     @RequestMapping(value = "/user/{id}", method = RequestMethod.PUT)
@@ -39,10 +48,8 @@ public class UserController {
     }
 
     //Ban user
-
     @RequestMapping(value = "/user/ban/{id}", method = RequestMethod.PUT)
     public void banUserById(@PathVariable("id") String id) {
-
         User user = userRepository.findById(id).get();
         user.setId(id);
         user.setEnabled(false);
@@ -52,7 +59,6 @@ public class UserController {
 
     @RequestMapping(value = "/user/unban/{id}", method = RequestMethod.PUT)
     public void unbanUserById(@PathVariable("id") String id) {
-
         User user = userRepository.findById(id).get();
         user.setId(id);
         user.setEnabled(true);
