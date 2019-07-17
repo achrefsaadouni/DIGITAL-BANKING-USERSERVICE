@@ -21,6 +21,7 @@ public class User {
     private String lastName;
     private Date createdDate;
     private boolean enabled;
+    private boolean activated;
     @DBRef
     private Set<Role> roles;
     public String getId() {
@@ -77,5 +78,13 @@ public class User {
     }
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public boolean isActivated() {
+        return activated;
+    }
+
+    public void setActivated(boolean activated) {
+        this.activated = activated;
     }
 }
