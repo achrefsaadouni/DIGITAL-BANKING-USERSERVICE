@@ -2,15 +2,18 @@ package tn.com.biat.user_service.controllers;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import tn.com.biat.user_service.models.Password;
 import tn.com.biat.user_service.models.User;
 import tn.com.biat.user_service.repositories.RoleRepository;
 import tn.com.biat.user_service.repositories.UserRepository;
 
+
 import javax.validation.Valid;
-import javax.validation.constraints.Null;
-import java.util.HashSet;
 import java.util.List;
 
 @RestController
@@ -22,6 +25,7 @@ public class UserController {
     @Autowired
     private RoleRepository roleRepository;
 
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     //Affichage de tout les users
 
@@ -75,6 +79,30 @@ public class UserController {
         user.getRoles().add(roleRepository.findByRole(role));
         userRepository.save(user);
     }
+    //modifier profile
+
+    @RequestMapping(value = "/simpleUser/{id}", method = RequestMethod.PUT)
+    public void editprofileById(@PathVariable("id") String id, @Valid @RequestBody User user) {
+        user.setId(id);
+        userRepository.save(user);
+    }
+
+    @RequestMapping(value = "/simpleUser/password/{id}", method = RequestMethod.PUT)
+    public ResponseEntity editpassword(@PathVariable("id") String id, @Valid @RequestBody Password body) {
+        User user = userRepository.findById(id).get();
+        if (!passwordEncoder.matches(body.getAncienPassword(),user.getPassword()))
+        {
+            return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
+        }
+        else {
+            user.setPassword(passwordEncoder.encode(body.getNewPassword()));
+            userRepository.save(user);
+            return new ResponseEntity(HttpStatus.OK);
+        }
+    }
+
+
+
 
 
 
